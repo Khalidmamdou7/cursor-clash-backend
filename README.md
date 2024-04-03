@@ -7,7 +7,9 @@ Faculty of Engineering.
 The backend is built using the Java Spring Boot framework.
 
 The frontend for this project can be found [here](). [Not created yet]
-The project is still under development and is not yet ready for production use.
+
+
+> The project is still under development and is not yet ready for production use.
 
 
 
@@ -38,3 +40,6 @@ Note: If you are using IntelliJ IDEA, you can use the built-in Maven and Java to
 1. The server will start on `localhost:<PORT>` where `<PORT>` is the port specified in the `application.properties` file
 
 
+## Contribution Guidelines
+
+Please refer to the [CONTRIBUTING.md](CONTRIBUTING.md) file for the contribution guidelines.
