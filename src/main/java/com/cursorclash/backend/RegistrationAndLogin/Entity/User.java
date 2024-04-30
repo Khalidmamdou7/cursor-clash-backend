@@ -15,18 +15,18 @@ public class User {
 
     @Column(name = "username")
     @JsonProperty("user_name")
-    @NotNull
-    @NotBlank
+    @NotNull(message = "Username is required")
+    @NotBlank(message = "Username cannot be blank")
     private String Username;
 
     @Column(name = "email")
-    @NotNull
-    @NotBlank
+    @NotNull(message = "Email is required")
+    @NotBlank(message = "Email cannot be blank")
     private String email;
 
-    @Column(name="password")
-    @NotNull
-    @NotBlank
+    @Column(name = "password")
+    @NotNull(message = "Password is required")
+    @NotBlank(message = "Password cannot be blank")
     private String password;
 
     public User(){}
