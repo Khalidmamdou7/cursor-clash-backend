@@ -10,11 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
+import com.cursorclash.backend.RegistrationAndLogin.JWT.JwtTokenProvider;
 import java.util.Optional;
 
 @Service
 public class UserIMPL implements UserService {
+
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
 
     @Autowired
     private UserRepo userRepo;
@@ -44,7 +47,9 @@ public class UserIMPL implements UserService {
             String encodedPassword = newUser.getPassword();
             Boolean isPwdRight = passwordEncoder.matches(loginDTO.getPassword(), encodedPassword);
             if (isPwdRight) {
-                return new LoginResponse("Login Success", true);
+                String token = jwtTokenProvider.generateToken(loginDTO.getEmail());
+                return new LoginResponse("Login Success", true, token);
+
             } else {
                 return new LoginResponse("Invalid Email or Password ", false);
             }

@@ -1,12 +1,27 @@
 package com.cursorclash.backend.RegistrationAndLogin.response;
 
 public class LoginResponse {
-    String  message;
-    Boolean status;
+    private String  message;
+    private Boolean status;
+    private String token;
+
+    public LoginResponse(String message, Boolean status, String token) {
+        this.message = message;
+        this.status = status;
+        this.token = token;
+    }
 
     public LoginResponse(String message, Boolean status) {
         this.message = message;
         this.status = status;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
     public LoginResponse(){}
 
