@@ -1,5 +1,6 @@
 package com.cursorclash.backend.RegistrationAndLogin.DTO;
 
+import com.cursorclash.backend.RegistrationAndLogin.Entity.UserRole;
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -12,14 +13,25 @@ public class UserDTO {
     private String email;
     private String password;
 
-    public UserDTO(int userid, String username, String email, String password) {
+    private UserRole role;
+
+    public UserDTO(int userid, String username, String email, String password, UserRole role) {
         this.userid = userid;
         Username = username;
         this.email = email;
         this.password = password;
+        this.role = role;
     }
 
     public UserDTO(){}
+
+    public UserRole getRole() {
+        return role;
+    }
+
+    public void setRole(UserRole role) {
+        this.role = role;
+    }
 
     public int getUserid() {
         return userid;
