@@ -1,10 +1,13 @@
 package com.cursorclash.backend.RegistrationAndLogin.Service.impl;
 
+import com.cursorclash.backend.Document.Document;
 import com.cursorclash.backend.RegistrationAndLogin.DTO.LoginDTO;
 import com.cursorclash.backend.RegistrationAndLogin.DTO.UserDTO;
 import com.cursorclash.backend.RegistrationAndLogin.Entity.User;
+import com.cursorclash.backend.RegistrationAndLogin.Repo.DocumentRepo;
 import com.cursorclash.backend.RegistrationAndLogin.Repo.UserRepo;
 import com.cursorclash.backend.RegistrationAndLogin.Service.UserService;
+import com.cursorclash.backend.RegistrationAndLogin.config.AuthenticationFacade;
 import com.cursorclash.backend.RegistrationAndLogin.response.LoginResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -12,9 +15,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.cursorclash.backend.RegistrationAndLogin.JWT.JwtTokenProvider;
 import java.util.Optional;
+import com.cursorclash.backend.RegistrationAndLogin.DTO.DocumentDTO;
 
 @Service
 public class UserIMPL implements UserService {
+
+    @Autowired
+    private DocumentRepo documentRepo;
+
+    @Autowired
+    private AuthenticationFacade authenticationFacade;
 
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
@@ -26,6 +36,24 @@ public class UserIMPL implements UserService {
 
     private PasswordEncoder passwordEncoder;
 
+
+    @Override
+    public String createDocument(DocumentDTO documentDTO) {
+        // Retrieve current authenticated user
+        User currentUser = authenticationFacade.getCurrentUser();
+
+        // Create a new Document entity
+        Document document = new Document();
+        document.setName(documentDTO.getName());
+        document.setContent(documentDTO.getContent());
+        document.setOwner(currentUser);
+
+        // Save the document to the database
+        Document savedDocument = documentRepo.save(document);
+
+        return String.valueOf(savedDocument.getId());
+    }
+    
     @Override
     public String addUser(UserDTO userDTO) {
         User user = new User(

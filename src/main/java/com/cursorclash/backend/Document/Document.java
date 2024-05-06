@@ -21,9 +21,21 @@ public class Document {
     @OneToMany(mappedBy = "document")
     private List<DocumentPermission> permissions;
 
+    @Lob
+    @Column(name = "content", columnDefinition = "TEXT")
+    private String content;
 
     public User getOwner() {
         return owner;
+    }
+
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public void setOwner(User owner) {
@@ -52,5 +64,16 @@ public class Document {
 
     public void setPermissions(List<DocumentPermission> permissions) {
         this.permissions = permissions;
+    }
+
+    public User getEditor() {
+        if (permissions != null) {
+            for (DocumentPermission permission : permissions) {
+                if (permission.getPermissionType() == PermissionType.WRITE) {
+                    return permission.getUser();
+                }
+            }
+        }
+        return null;
     }
 }
