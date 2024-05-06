@@ -32,8 +32,7 @@ public class UserIMPL implements UserService {
                 userDTO.getUserid(),
                 userDTO.getUsername(),
                 userDTO.getEmail(),
-                this.passwordEncoder.encode(userDTO.getPassword()),
-                userDTO.getRole() // Pass UserRole parameter
+                this.passwordEncoder.encode(userDTO.getPassword())
         );
         userRepo.save(user);
         return user.getUsername();

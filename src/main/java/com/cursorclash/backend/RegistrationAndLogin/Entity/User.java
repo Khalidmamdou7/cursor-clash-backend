@@ -29,27 +29,18 @@ public class User {
     @NotBlank(message = "Password cannot be blank")
     private String password;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "role")
-    private UserRole role;
 
     public User(){}
 
-    public User(int userid, String username, String email, String password, UserRole role) {
+    public User(int userid, String username, String email, String password) {
         this.userid = userid;
         Username = username;
         this.email = email;
         this.password = password;
-        this.role = role;
     }
 
-    public UserRole getRole() {
-        return role;
-    }
 
-    public void setRole(UserRole role) {
-        this.role = role;
-    }
+
 
     public int getUserid() {
         return userid;
