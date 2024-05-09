@@ -69,19 +69,19 @@ public class ColabEditController {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             JsonNode jsonNode = objectMapper.readTree(message);
-            String type = jsonNode.get("type").asText();
-            char character = jsonNode.get("char").asText().charAt(0);
-            double position = jsonNode.get("position").asDouble();
-            int userId = jsonNode.get("userId").asInt();
-            colabEditService.insertChar(character, position, userId, documentId);
+            colabEditService.handleOperations(documentId, jsonNode);
+
         } catch (JsonProcessingException e) {
             e.printStackTrace();
+            return "Error processing message";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Unknown error occurred";
         }
 
 
 
-
-        return colabEditService.getDocument(documentId);
+        return message;
     }
 
 }
