@@ -36,24 +36,6 @@ public class UserIMPL implements UserService {
 
     private PasswordEncoder passwordEncoder;
 
-
-    @Override
-    public String createDocument(DocumentDTO documentDTO, String token) {
-        // Retrieve current authenticated user
-//        User currentUser = authenticationFacade.getCurrentUser();
-        User currentUser = jwtTokenProvider.getCurrentUser(token);
-
-        // Create a new Document entity
-        Document document = new Document();
-        document.setName(documentDTO.getName());
-        document.setContent(documentDTO.getContent());
-        document.setOwner(currentUser);
-
-        // Save the document to the database
-        Document savedDocument = documentRepo.save(document);
-
-        return String.valueOf(savedDocument.getId());
-    }
     
     @Override
     public String addUser(UserDTO userDTO) {
