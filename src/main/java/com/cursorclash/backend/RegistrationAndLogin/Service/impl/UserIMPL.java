@@ -38,9 +38,10 @@ public class UserIMPL implements UserService {
 
 
     @Override
-    public String createDocument(DocumentDTO documentDTO) {
+    public String createDocument(DocumentDTO documentDTO, String token) {
         // Retrieve current authenticated user
-        User currentUser = authenticationFacade.getCurrentUser();
+//        User currentUser = authenticationFacade.getCurrentUser();
+        User currentUser = jwtTokenProvider.getCurrentUser(token);
 
         // Create a new Document entity
         Document document = new Document();

@@ -23,9 +23,10 @@ public class UserController {
     private UserService userService;
 
     @PostMapping(path = "/documents")
-    public ResponseEntity<?> createDocument(@RequestBody DocumentDTO documentDTO) {
+    public ResponseEntity<?> createDocument(@RequestBody DocumentDTO documentDTO, @RequestHeader("Authorization") String token) {
+        System.out.println("create document req" + documentDTO.toString());
         try {
-            String documentId = userService.createDocument(documentDTO);
+            String documentId = userService.createDocument(documentDTO, token);
             return ResponseEntity.ok("Document created successfully with ID: " + documentId);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to create document: " + e.getMessage());
@@ -34,12 +35,14 @@ public class UserController {
 
     @PostMapping(path = "/register")
     public String saveUser(@RequestBody UserDTO userDTO){
+        System.out.println("register req" + userDTO.toString());
         String id = userService.addUser(userDTO);
         return id;
     }
 
     @PostMapping(path = "/login")
     public ResponseEntity<?> login(@RequestBody LoginDTO loginDTO){
+        System.out.println("login req" + loginDTO.toString());
         LoginResponse loginMessage = userService.login(loginDTO);
         if (loginMessage.getStatus()) {
             return ResponseEntity.ok(loginMessage);

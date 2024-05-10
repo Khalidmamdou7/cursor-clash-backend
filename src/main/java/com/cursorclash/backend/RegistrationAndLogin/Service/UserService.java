@@ -10,5 +10,5 @@ public interface UserService {
     String addUser(UserDTO userDTO);
     LoginResponse login(LoginDTO loginDTO);
 
-    String createDocument(DocumentDTO documentDTO);
+    String createDocument(DocumentDTO documentDTO, String token);
 }
