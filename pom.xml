@@ -123,5 +123,6 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
+		<finalName>cursor_clash_backend</finalName>
 	</build>
 </project>

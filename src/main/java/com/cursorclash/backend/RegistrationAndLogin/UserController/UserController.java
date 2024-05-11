@@ -18,10 +18,8 @@ import com.cursorclash.backend.Document.PermissionType;
 import java.util.Map;
 
 @RestController
-@CrossOrigin
+@CrossOrigin(origins = "*")
 @RequestMapping(path = "api/user")
-
-
 public class UserController {
 
     @Autowired
@@ -29,6 +27,11 @@ public class UserController {
 
     @Autowired
     private DocumentService documentService;
+
+    @GetMapping("/health")
+    public ResponseEntity<?> healthCheck(){
+        return ResponseEntity.ok().body("Server is up and running");
+    }
 
     @PostMapping("/share-document")
     public void shareDocument(
