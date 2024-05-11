@@ -39,6 +39,11 @@ public class UserIMPL implements UserService {
     
     @Override
     public String addUser(UserDTO userDTO) {
+        User existingUser = userRepo.findByEmail(userDTO.getEmail());
+        if (existingUser != null) {
+            throw new RuntimeException("User with email " + userDTO.getEmail() + " already exists.");
+        }
+
         User user = new User(
                 userDTO.getUserid(),
                 userDTO.getUsername(),

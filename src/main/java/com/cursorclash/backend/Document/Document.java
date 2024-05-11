@@ -70,7 +70,7 @@ public class Document {
         if (permissions != null) {
             for (DocumentPermission permission : permissions) {
                 if (permission.getPermissionType() == PermissionType.WRITE) {
-                    return permission.getUser();
+                    return permission.getGrantee();
                 }
             }
         }

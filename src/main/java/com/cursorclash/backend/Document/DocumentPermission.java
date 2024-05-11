@@ -15,11 +15,28 @@ public class DocumentPermission {
     private Document document;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @JoinColumn(name = "grantee_id", nullable = false)
+    private User grantee;
 
     @Enumerated(EnumType.STRING)
     private PermissionType permissionType;
+
+    public DocumentPermission(Document document, User grantee, PermissionType permissionType) {
+        this.document = document;
+        this.grantee = grantee;
+        this.permissionType = permissionType;
+    }
+
+    public DocumentPermission() {
+    }
+
+    public User getGrantee() {
+        return grantee;
+    }
+
+    public void setGrantee(User grantee) {
+        this.grantee = grantee;
+    }
 
     public Long getId() {
         return id;
@@ -37,13 +54,6 @@ public class DocumentPermission {
         this.document = document;
     }
 
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
 
     public PermissionType getPermissionType() {
         return permissionType;

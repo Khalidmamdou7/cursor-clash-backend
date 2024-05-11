@@ -67,9 +67,9 @@ public class UserController {
     }
 
     @GetMapping("/documents/{documentId}")
-    public ResponseEntity<?> openDocument(@PathVariable Long documentId) {
+    public ResponseEntity<?> openDocument(@PathVariable Long documentId, @RequestHeader("Authorization") String token) {
         try {
-            String content = documentService.openDocument(documentId);
+            String content = documentService.openDocument(documentId, token);
             if (content != null) {
                 return ResponseEntity.ok(content);
             } else {
