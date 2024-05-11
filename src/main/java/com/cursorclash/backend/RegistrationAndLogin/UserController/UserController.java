@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.cursorclash.backend.RegistrationAndLogin.Service.DocumentService;
+import com.cursorclash.backend.Document.PermissionType;
 
 import java.util.Map;
 
@@ -28,6 +29,16 @@ public class UserController {
 
     @Autowired
     private DocumentService documentService;
+
+    @PostMapping("/share-document")
+    public void shareDocument(
+            @RequestBody Map<String, Object> requestBody,
+            @RequestHeader("Authorization") String token) {
+        Long documentId = Long.parseLong(requestBody.get("documentId").toString());
+        String recipientEmail = requestBody.get("recipientEmail").toString();
+        PermissionType permissionType = PermissionType.valueOf(requestBody.get("permissionType").toString());
+        documentService.shareDocument(documentId, recipientEmail, permissionType, token);
+    }
 
     @DeleteMapping("/documents/{documentId}")
     public ResponseEntity<?> deleteDocument(@PathVariable Long documentId, @RequestHeader("Authorization") String token) {

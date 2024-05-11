@@ -63,42 +63,6 @@ public class DocumentService {
         }
     }
 
-
-    public void revokePermission(Long documentId, Long permissionId, String token) {
-        // Retrieve the document
-        Optional<Document> optionalDocument = documentRepo.findById(documentId);
-        User currentUser = jwtTokenProvider.getCurrentUser(token);
-
-        if (optionalDocument.isPresent() && currentUser != null) {
-            Document document = optionalDocument.get();
-
-            // Check if the current user is the owner of the document
-            if (document.getOwner().equals(currentUser)) {
-                // Retrieve the permission
-                Optional<DocumentPermission> optionalPermission = documentPermissionRepo.findById(permissionId);
-                if (optionalPermission.isPresent()) {
-                    DocumentPermission permission = optionalPermission.get();
-                    // Check if the permission is associated with the document
-                    if (permission.getDocument().equals(document)) {
-                        documentPermissionRepo.delete(permission);
-                    } else {
-                        // Handle case where permission is not associated with the document
-                        throw new RuntimeException("Permission with ID " + permissionId + " is not associated with the document.");
-                    }
-                } else {
-                    // Handle case where permission is not found
-                    throw new RuntimeException("Permission with ID " + permissionId + " not found.");
-                }
-            } else {
-                // Handle case where current user is not the owner of the document
-                throw new RuntimeException("You don't have permission to revoke permissions for this document.");
-            }
-        } else {
-            // Handle case where document is not found
-            throw new RuntimeException("Document with ID " + documentId + " not found.");
-        }
-    }
-
     public boolean hasPermission(Long documentId, int userId, PermissionType permissionType) {
         // Retrieve the document
         Optional<Document> optionalDocument = documentRepo.findById(documentId);
@@ -110,7 +74,7 @@ public class DocumentService {
             if (optionalUser.isPresent()) {
                 User user = optionalUser.get();
 
-                // Check if the user has the specified permission for the document
+                // Checking permission for the document
                 List<DocumentPermission> permissions = documentPermissionRepo.findByDocumentAndGranteeAndPermissionType(document, user, permissionType);
                 return !permissions.isEmpty();
             } else {
@@ -186,12 +150,9 @@ public class DocumentService {
             if (optionalDocument.isPresent()) {
                 Document document = optionalDocument.get();
 
-                // Check if the current user is the owner of the document
+                // Owner checking
                 if (document.getOwner().equals(currentUser)) {
-                    // Delete document permissions associated with the document
                     documentPermissionRepo.deleteByDocument(document);
-
-                    // Delete the document itself
                     documentRepo.delete(document);
                 } else {
                     throw new RuntimeException("You are not the owner of the document.");
