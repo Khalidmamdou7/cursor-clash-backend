@@ -11,8 +11,11 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.cursorclash.backend.RegistrationAndLogin.Repo.UserRepo;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class DocumentService {
@@ -45,10 +48,16 @@ public class DocumentService {
                 throw new RuntimeException("You don't have permission to share this document.");
             }
 
-            // Find the recipient user by email
+            // Find the user by email
             User recipientUser = userRepo.findByEmail(recipientEmail);
             if (recipientUser == null) {
                 throw new RuntimeException("Recipient with email " + recipientEmail + " not found.");
+            }
+
+            // Check if the same permission already exists
+            List<DocumentPermission> existingPermissions = documentPermissionRepo.findByDocumentAndGranteeAndPermissionType(document, recipientUser, permissionType);
+            if (!existingPermissions.isEmpty()) {
+                throw new RuntimeException("This document is already shared with the recipient with the same permission.");
             }
 
             DocumentPermission documentPermission = new DocumentPermission();
@@ -177,4 +186,40 @@ public class DocumentService {
         }
         throw new RuntimeException("You dont have permission to open it");
     }
+
+    public List<DocumentDTO> getOwnedDocuments(String token) {
+        User currentUser = jwtTokenProvider.getCurrentUser(token);
+        List<DocumentDTO> ownedDocuments = new ArrayList<>();
+        List<Document> documents = documentRepo.findByOwner(currentUser);
+
+        for (Document document : documents) {
+            ownedDocuments.add(new DocumentDTO(document.getId(), document.getName(), document.getContent(), (long) document.getOwner().getUserid()));
+        }
+
+        return ownedDocuments;
+    }
+
+    public List<DocumentDTO> getSharedDocuments(String token) {
+        User currentUser = jwtTokenProvider.getCurrentUser(token);
+        List<DocumentDTO> sharedDocuments = new ArrayList<>();
+        List<DocumentPermission> documentPermissions = documentPermissionRepo.findByGrantee(currentUser);
+
+        for (DocumentPermission documentPermission : documentPermissions) {
+            if (documentPermission.getPermissionType() == PermissionType.DELETE) {
+                // If the permission is DELETE, remove the document from shared documents list
+                sharedDocuments.removeIf(doc -> doc.getId().equals(documentPermission.getDocument().getId()));
+            } else {
+                Document document = documentPermission.getDocument();
+                sharedDocuments.add(new DocumentDTO(
+                        document.getId(),
+                        document.getName(),
+                        documentPermission.getPermissionType().name(),
+                        (long) document.getOwner().getUserid()
+                ));
+            }
+        }
+
+        return sharedDocuments;
+    }
+
 }

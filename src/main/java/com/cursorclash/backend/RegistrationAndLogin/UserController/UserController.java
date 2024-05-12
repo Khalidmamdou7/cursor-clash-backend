@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import com.cursorclash.backend.RegistrationAndLogin.Service.DocumentService;
 import com.cursorclash.backend.Document.PermissionType;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -109,6 +110,26 @@ public class UserController {
             return ResponseEntity.ok(loginMessage);
         } else {
             return ResponseEntity.badRequest().body(loginMessage);
+        }
+    }
+
+    @GetMapping("/documents/owned")
+    public ResponseEntity<?> getOwnedDocuments(@RequestHeader("Authorization") String token) {
+        try {
+            List<DocumentDTO> ownedDocuments = documentService.getOwnedDocuments(token);
+            return ResponseEntity.ok(ownedDocuments);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to retrieve owned documents: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/documents/shared")
+    public ResponseEntity<?> getSharedDocuments(@RequestHeader("Authorization") String token) {
+        try {
+            List<DocumentDTO> sharedDocuments = documentService.getSharedDocuments(token);
+            return ResponseEntity.ok(sharedDocuments);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to retrieve owned documents: " + e.getMessage());
         }
     }
 

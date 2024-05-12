@@ -11,4 +11,6 @@ public interface DocumentPermissionRepo extends JpaRepository<DocumentPermission
     List<DocumentPermission> findByDocumentAndGranteeAndPermissionType(Document document, User grantee, PermissionType permissionType);
 
     void deleteByDocument(Document document);
+
+    List<DocumentPermission> findByGrantee(User currentUser);
 }
