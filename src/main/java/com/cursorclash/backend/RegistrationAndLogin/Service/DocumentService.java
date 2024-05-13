@@ -135,11 +135,8 @@ public class DocumentService {
             Optional<Document> optionalDocument = documentRepo.findById(documentId);
             if (optionalDocument.isPresent()) {
                 Document document = optionalDocument.get();
-                // Owner checking
-                if (document.getOwner().equals(currentUser) || document.getEditor().equals(currentUser)) {
-                    document.setName(newName);
-                    return documentRepo.save(document);
-                }
+                document.setName(newName);
+                return documentRepo.save(document);
             }
         } else {
             throw new RuntimeException("You dont have permission to rename it");
