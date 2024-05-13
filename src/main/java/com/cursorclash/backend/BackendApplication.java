@@ -6,7 +6,6 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication(exclude = SecurityAutoConfiguration.class)
-@ComponentScan(basePackages = {"com.cursorclash.backend.RegistrationAndLogin"})
 public class BackendApplication {
 
 	public static void main(String[] args) {
