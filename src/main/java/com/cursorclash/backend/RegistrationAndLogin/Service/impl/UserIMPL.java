@@ -3,6 +3,7 @@ package com.cursorclash.backend.RegistrationAndLogin.Service.impl;
 import com.cursorclash.backend.Document.Document;
 import com.cursorclash.backend.RegistrationAndLogin.DTO.LoginDTO;
 import com.cursorclash.backend.RegistrationAndLogin.DTO.UserDTO;
+import com.cursorclash.backend.RegistrationAndLogin.DTO.UserResponseDTO;
 import com.cursorclash.backend.RegistrationAndLogin.Entity.User;
 import com.cursorclash.backend.RegistrationAndLogin.Repo.DocumentRepo;
 import com.cursorclash.backend.RegistrationAndLogin.Repo.UserRepo;
@@ -38,7 +39,7 @@ public class UserIMPL implements UserService {
 
     
     @Override
-    public String addUser(UserDTO userDTO) {
+    public UserResponseDTO addUser(UserDTO userDTO) {
         User existingUser = userRepo.findByEmail(userDTO.getEmail());
         if (existingUser != null) {
             throw new RuntimeException("User with email " + userDTO.getEmail() + " already exists.");
@@ -51,7 +52,12 @@ public class UserIMPL implements UserService {
                 this.passwordEncoder.encode(userDTO.getPassword())
         );
         userRepo.save(user);
-        return user.getUsername();
+        UserResponseDTO userResponseDTO = new UserResponseDTO(
+                user.getUserid(),
+                user.getUsername(),
+                user.getEmail()
+        );
+        return userResponseDTO;
     }
 
     @Override

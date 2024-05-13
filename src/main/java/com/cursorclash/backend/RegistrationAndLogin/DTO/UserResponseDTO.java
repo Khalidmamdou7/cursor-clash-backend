@@ -9,9 +9,9 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class DocumentDTO {
-    private Long id;
-    private String name;
-    private int ownerId;
-    private String content;
+public class UserResponseDTO {
+
+    private int userid;
+    private String Username;
+    private String email;
 }

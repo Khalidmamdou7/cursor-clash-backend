@@ -98,7 +98,7 @@ public class DocumentService {
 
 
 
-    public String createDocument(DocumentDTO documentDTO, String token) {
+    public Long createDocument(DocumentDTO documentDTO, String token) {
         User currentUser = jwtTokenProvider.getCurrentUser(token);
 
         // Create a new Document entity
@@ -117,7 +117,7 @@ public class DocumentService {
             documentPermissionRepo.save(documentPermission);
         }
 
-        return String.valueOf(savedDocument.getId());
+        return savedDocument.getId();
     }
 
 
@@ -174,14 +174,19 @@ public class DocumentService {
         }
     }
 
-    public String openDocument(Long documentId, String token) {
+    public DocumentDTO openDocument(Long documentId, String token) {
         User currentUser = jwtTokenProvider.getCurrentUser(token);
         int userid = currentUser.getUserid();
         if (hasPermission(documentId, userid,PermissionType.READ)) {
             Optional<Document> optionalDocument = documentRepo.findById(documentId);
             if (optionalDocument.isPresent()) {
                 Document document = optionalDocument.get();
-                return document.getContent();
+                DocumentDTO documentDTO = new DocumentDTO(
+                        document.getId(),
+                        document.getName(),
+                        document.getOwner().getUserid(),
+                        document.getContent());
+                return documentDTO;
             }
         }
         throw new RuntimeException("You dont have permission to open it");
@@ -193,7 +198,12 @@ public class DocumentService {
         List<Document> documents = documentRepo.findByOwner(currentUser);
 
         for (Document document : documents) {
-            ownedDocuments.add(new DocumentDTO(document.getId(), document.getName(), document.getContent(), (long) document.getOwner().getUserid()));
+            ownedDocuments.add(new DocumentDTO(
+                    document.getId(),
+                    document.getName(),
+                    document.getOwner().getUserid(),
+                    document.getContent()
+            ));
         }
 
         return ownedDocuments;
@@ -213,8 +223,9 @@ public class DocumentService {
                 sharedDocuments.add(new DocumentDTO(
                         document.getId(),
                         document.getName(),
-                        documentPermission.getPermissionType().name(),
-                        (long) document.getOwner().getUserid()
+                        document.getOwner().getUserid(),
+                        document.getContent()
+//                        documentPermission.getPermissionType().name() what does this has to do with document dto
                 ));
             }
         }

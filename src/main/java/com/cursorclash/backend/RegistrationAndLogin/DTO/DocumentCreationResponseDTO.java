@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class DocumentDTO {
+public class DocumentCreationResponseDTO {
     private Long id;
     private String name;
     private int ownerId;
