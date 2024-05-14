@@ -1,4 +1,4 @@
-package com.cursorclash.backend.configs;
+package com.cursorclash.backend.colabedit.configs;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
@@ -12,10 +12,13 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/chat");
+
+        JwtHandshakeInterceptor jwtHandshakeInterceptor = new JwtHandshakeInterceptor();
+
+        String originPattern = "http*";
+
         registry.addEndpoint("/chat").withSockJS();
-        registry.addEndpoint("/colabedit");
-        registry.addEndpoint("/colabedit").withSockJS();
+        registry.addEndpoint("/colabedit").addInterceptors(jwtHandshakeInterceptor).setAllowedOriginPatterns(originPattern).withSockJS();
     }
 
     @Override
@@ -23,4 +26,10 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         config.enableSimpleBroker("/topic");
         config.setApplicationDestinationPrefixes("/app");
     }
+
+
+
+
+
+
 }

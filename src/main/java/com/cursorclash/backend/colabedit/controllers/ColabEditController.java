@@ -1,23 +1,26 @@
-package com.cursorclash.backend.colabedit;
+package com.cursorclash.backend.colabedit.controllers;
 
+import com.cursorclash.backend.colabedit.services.ColabEditService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.DestinationVariable;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.handler.annotation.*;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
+import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping("/colabedit")
 public class ColabEditController {
 
     @Autowired
     private ColabEditService colabEditService;
+
+
 
     @GetMapping("/")
     public ResponseEntity<?> healthCheck(){
@@ -64,8 +67,13 @@ public class ColabEditController {
 
     @MessageMapping("/colabedit/{documentId}")
     @SendTo("/topic/colabedit/{documentId}")
-    public String broadcastColabEdit(@DestinationVariable String documentId, @Payload String message) throws JsonProcessingException {
+    public String broadcastColabEdit(@DestinationVariable String documentId, @Payload String message, SimpMessageHeaderAccessor accessor) throws JsonProcessingException {
+
         System.out.println("Received message " + message + " for document " + documentId);
+        System.out.println("Session ID: " + accessor.getSessionId());
+        System.out.println("Destination: " + accessor.getDestination());
+        System.out.println("User: " + accessor.getUser());
+        System.out.println("User details: " + accessor.getSessionAttributes().get("token"));
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             JsonNode jsonNode = objectMapper.readTree(message);

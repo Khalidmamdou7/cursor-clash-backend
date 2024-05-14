@@ -1,16 +1,19 @@
-package com.cursorclash.backend.colabedit;
+package com.cursorclash.backend.colabedit.services;
 
+import com.cursorclash.backend.colabedit.DTOs.InitialMessageOpDTO;
 import com.cursorclash.backend.colabedit.utils.FractionalIndexingCrdt;
 import com.cursorclash.backend.colabedit.utils.FractionalIndexingCrdtImpl;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedHashMap;
-import java.util.TreeMap;
 
 @Service
 public class ColabEditServiceImpl implements ColabEditService {
     private LinkedHashMap<String, FractionalIndexingCrdt> crdts = new LinkedHashMap<>();
+    private LinkedHashMap<String, LinkedHashMap<Integer, ?>> activeUsers = new LinkedHashMap<>();
+    private LinkedHashMap<String, LinkedHashMap<Integer, Double>> usersCursorPositions = new LinkedHashMap<>();
 
 
     @Override
@@ -105,6 +108,9 @@ public class ColabEditServiceImpl implements ColabEditService {
 
         var crdt = getCrdt(documentId);
         // TODO: Implement changing user status
+
+//        activeUsers.get(documentId).put(userId, userInfo);
+        usersCursorPositions.get(documentId).put(userId, 0.0);
     }
 
     private void handleOtherUserDisconnection(String documentId, JsonNode operationJson) {
@@ -175,4 +181,18 @@ public class ColabEditServiceImpl implements ColabEditService {
 
 
     }
+
+    @Override
+    public InitialMessageOpDTO getInitialMessage(String documentId) {
+        FractionalIndexingCrdt crdt = getCrdt(documentId);
+
+        InitialMessageOpDTO initialMessageOpDTO = new InitialMessageOpDTO();
+        // TODO: send the crdt
+        initialMessageOpDTO.setContent(crdt.getDocument());
+        initialMessageOpDTO.setActiveUsers(activeUsers.get(documentId));
+        initialMessageOpDTO.setUsersCursorsPositions(usersCursorPositions.get(documentId));
+
+        return initialMessageOpDTO;
+    }
+
 }

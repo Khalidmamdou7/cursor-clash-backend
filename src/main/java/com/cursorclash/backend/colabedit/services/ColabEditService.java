@@ -1,5 +1,6 @@
-package com.cursorclash.backend.colabedit;
+package com.cursorclash.backend.colabedit.services;
 
+import com.cursorclash.backend.colabedit.DTOs.InitialMessageOpDTO;
 import com.fasterxml.jackson.databind.JsonNode;
 
 public interface ColabEditService {
@@ -9,4 +10,5 @@ public interface ColabEditService {
     public String getDocument(String documentId);
     public void handleOperations(String documentId, JsonNode operationJson);
 
+    public InitialMessageOpDTO getInitialMessage(String documentId);
 }

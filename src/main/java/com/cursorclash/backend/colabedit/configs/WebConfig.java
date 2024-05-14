@@ -1,4 +1,4 @@
-package com.cursorclash.backend.configs;
+package com.cursorclash.backend.colabedit.configs;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
