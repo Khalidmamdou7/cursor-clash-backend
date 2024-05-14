@@ -12,9 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.cursorclash.backend.RegistrationAndLogin.Repo.UserRepo;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -210,24 +208,33 @@ public class DocumentService {
         User currentUser = jwtTokenProvider.getCurrentUser(token);
         List<DocumentDTO> sharedDocuments = new ArrayList<>();
         List<DocumentPermission> documentPermissions = documentPermissionRepo.findByGrantee(currentUser);
+        Set<Long> addedDocumentIds = new HashSet<>();
 
         for (DocumentPermission documentPermission : documentPermissions) {
-            if (documentPermission.getPermissionType() == PermissionType.DELETE) {
-                // If the permission is DELETE, remove the document from shared documents list
-                sharedDocuments.removeIf(doc -> doc.getId().equals(documentPermission.getDocument().getId()));
+            Document document = documentPermission.getDocument();
+            Long documentId = document.getId();
+
+            if (!addedDocumentIds.contains(documentId)) {
+
+                if (documentPermission.getPermissionType() != PermissionType.DELETE) {
+                    sharedDocuments.add(new DocumentDTO(
+                            documentId,
+                            document.getName(),
+                            document.getOwner().getUserid(),
+                            document.getContent()
+                    ));
+                }
+                addedDocumentIds.add(documentId);
             } else {
-                Document document = documentPermission.getDocument();
-                sharedDocuments.add(new DocumentDTO(
-                        document.getId(),
-                        document.getName(),
-                        document.getOwner().getUserid(),
-                        document.getContent()
-//                        documentPermission.getPermissionType().name() what does this has to do with document dto
-                ));
+                if (documentPermission.getPermissionType() == PermissionType.DELETE) {
+                    sharedDocuments.removeIf(doc -> doc.getId().equals(documentId));
+                }
             }
         }
 
         return sharedDocuments;
     }
+
+
 
 }
