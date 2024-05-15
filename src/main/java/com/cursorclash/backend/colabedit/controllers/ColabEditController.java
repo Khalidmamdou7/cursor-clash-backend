@@ -78,7 +78,6 @@ public class ColabEditController {
         }
 
 
-
         return message;
     }
 

@@ -12,7 +12,7 @@ public interface ColabEditService {
     public String getDocument(String documentId);
     public void handleOperations(String documentId, User user, JsonNode operationJson);
 
-    public InitialMessageOpDTO getInitialMessage(String documentId);
+    public InitialMessageOpDTO getInitialMessage(String documentId, User user);
     public UserDisconnectOpDTO getDisconnectedUserMessage(User user);
     public UserConnectOpDTO getConnectedUserMessage(User user);
 

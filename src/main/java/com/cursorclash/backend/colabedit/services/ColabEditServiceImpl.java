@@ -1,5 +1,6 @@
 package com.cursorclash.backend.colabedit.services;
 
+import com.cursorclash.backend.Authentication.DTOs.UserResponseDTO;
 import com.cursorclash.backend.Authentication.entities.User;
 import com.cursorclash.backend.Document.services.DocumentService;
 import com.cursorclash.backend.Document.DTOs.DocumentDTO;
@@ -127,7 +128,7 @@ public class ColabEditServiceImpl implements ColabEditService {
     }
 
     @Override
-    public InitialMessageOpDTO getInitialMessage(String documentId) {
+    public InitialMessageOpDTO getInitialMessage(String documentId, User user) {
         FractionalIndexingCrdt crdt = getCrdt(documentId);
 
         InitialMessageOpDTO initialMessageOpDTO = new InitialMessageOpDTO();
@@ -135,6 +136,7 @@ public class ColabEditServiceImpl implements ColabEditService {
         initialMessageOpDTO.setContent(crdt.getDocument());
         initialMessageOpDTO.setActiveUsers(activeUsers.get(documentId));
         initialMessageOpDTO.setUsersCursorsPositions(usersCursorPositions.get(documentId));
+        initialMessageOpDTO.setUser(new UserResponseDTO(user.getUserid(), user.getUsername(), user.getEmail()));
 
         return initialMessageOpDTO;
     }

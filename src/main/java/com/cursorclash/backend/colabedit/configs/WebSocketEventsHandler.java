@@ -43,7 +43,7 @@ public class WebSocketEventsHandler {
             // TODO: Check if user is allowed to access this document
             if (documentService.hasPermission(Long.valueOf(documentId), user.getUserid(), PermissionType.WRITE)) {
                 sessionDestinations.put(sessionId, accessor.getDestination());
-                var initialMessage = colabEditService.getInitialMessage(documentId);
+                var initialMessage = colabEditService.getInitialMessage(documentId, user);
                 SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor.create(StompCommand.MESSAGE.getMessageType());
                 headerAccessor.setSessionId(sessionId);
                 headerAccessor.setDestination(endpoint);

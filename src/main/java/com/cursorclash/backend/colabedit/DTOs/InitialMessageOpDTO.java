@@ -1,5 +1,6 @@
 package com.cursorclash.backend.colabedit.DTOs;
 
+import com.cursorclash.backend.Authentication.DTOs.UserResponseDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,5 +18,6 @@ public class InitialMessageOpDTO {
     private String content;
     private LinkedHashMap<Integer, ?> activeUsers;
     private LinkedHashMap<Integer, ?> usersCursorsPositions;
+    private UserResponseDTO user;
 
 }
