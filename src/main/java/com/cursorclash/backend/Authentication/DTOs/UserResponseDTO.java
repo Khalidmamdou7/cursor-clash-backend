@@ -12,6 +12,6 @@ import lombok.Setter;
 public class UserResponseDTO {
 
     private int userid;
-    private String Username;
+    private String username;
     private String email;
 }

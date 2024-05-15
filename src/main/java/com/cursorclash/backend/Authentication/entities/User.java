@@ -14,10 +14,10 @@ public class User {
     private int userid;
 
     @Column(name = "username")
-    @JsonProperty("user_name")
+    @JsonProperty("username")
     @NotNull(message = "Username is required")
     @NotBlank(message = "Username cannot be blank")
-    private String Username;
+    private String username;
 
     @Column(name = "email")
     @NotNull(message = "Email is required")
@@ -34,7 +34,7 @@ public class User {
 
     public User(int userid, String username, String email, String password) {
         this.userid = userid;
-        this.Username = username;
+        this.username = username;
         this.email = email;
         this.password = password;
     }
@@ -47,7 +47,7 @@ public class User {
     }
 
     public String getUsername() {
-        return Username;
+        return username;
     }
 
     public String getEmail() {
@@ -63,7 +63,7 @@ public class User {
     }
 
     public void setUsername(String username) {
-        Username = username;
+        username = username;
     }
 
     public void setEmail(String email) {
@@ -78,7 +78,7 @@ public class User {
     public String toString() {
         return "User{" +
                 "userid=" + userid +
-                ", Username='" + Username + '\'' +
+                ", Username='" + username + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 '}';
