@@ -1,5 +1,6 @@
 package com.cursorclash.backend.colabedit.controllers;
 
+import com.cursorclash.backend.Authentication.entities.User;
 import com.cursorclash.backend.colabedit.services.ColabEditService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -25,18 +26,6 @@ public class ColabEditController {
     @GetMapping("/")
     public ResponseEntity<?> healthCheck(){
         return ResponseEntity.ok().body("ColabEdit is up and running");
-    }
-
-    @GetMapping("/insert-char")
-    public ResponseEntity<?> insertChar(
-            @RequestParam char character,
-            @RequestParam double position,
-            @RequestParam String documentId,
-            @RequestParam int userId
-    ){
-        System.out.println("Inserting character " + character + " at position " + position + " in document " + documentId + " by user " + userId);
-        colabEditService.insertChar(character, position, userId, documentId);
-        return ResponseEntity.ok().body(colabEditService.getDocument(documentId));
     }
 
     @GetMapping("/insert-char-between")
@@ -74,10 +63,11 @@ public class ColabEditController {
         System.out.println("Destination: " + accessor.getDestination());
         System.out.println("User: " + accessor.getUser());
         System.out.println("User details: " + accessor.getSessionAttributes().get("user"));
+        User user = (User) accessor.getSessionAttributes().get("user");
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             JsonNode jsonNode = objectMapper.readTree(message);
-            colabEditService.handleOperations(documentId, jsonNode);
+            colabEditService.handleOperations(documentId, user, jsonNode);
 
         } catch (JsonProcessingException e) {
             e.printStackTrace();

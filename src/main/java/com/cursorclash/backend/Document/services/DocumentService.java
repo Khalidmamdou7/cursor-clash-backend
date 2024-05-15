@@ -1,4 +1,4 @@
-package com.cursorclash.backend.Authentication.services;
+package com.cursorclash.backend.Document.services;
 import com.cursorclash.backend.Document.entities.Document;
 import com.cursorclash.backend.Document.entities.DocumentPermission;
 import com.cursorclash.backend.Document.DTOs.PermissionType;
@@ -231,6 +231,24 @@ public class DocumentService {
         }
 
         return sharedDocuments;
+    }
+
+    public DocumentDTO updateDocumentContent(Long documentId, String content, int userid) {
+        if (hasPermission(documentId, userid,PermissionType.WRITE)) {
+            Optional<Document> optionalDocument = documentRepo.findById(documentId);
+            if (optionalDocument.isPresent()) {
+                Document document = optionalDocument.get();
+                document.setContent(content);
+                documentRepo.save(document);
+                return new DocumentDTO(
+                        document.getId(),
+                        document.getName(),
+                        document.getOwner().getUserid(),
+                        document.getContent()
+                );
+            }
+        }
+        return null;
     }
 
 }

@@ -2,7 +2,7 @@ package com.cursorclash.backend.Document.controllers;
 
 import com.cursorclash.backend.Document.DTOs.DocumentCreationResponseDTO;
 import com.cursorclash.backend.Document.DTOs.DocumentDTO;
-import com.cursorclash.backend.Authentication.services.DocumentService;
+import com.cursorclash.backend.Document.services.DocumentService;
 import com.cursorclash.backend.Document.entities.Document;
 import com.cursorclash.backend.Document.DTOs.PermissionType;
 import org.springframework.beans.factory.annotation.Autowired;

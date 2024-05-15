@@ -1,7 +1,7 @@
 package com.cursorclash.backend.colabedit.configs;
 
 import com.cursorclash.backend.Authentication.entities.User;
-import com.cursorclash.backend.Authentication.services.DocumentService;
+import com.cursorclash.backend.Document.services.DocumentService;
 import com.cursorclash.backend.Document.DTOs.PermissionType;
 import com.cursorclash.backend.colabedit.services.ColabEditService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +50,7 @@ public class WebSocketEventsHandler {
                 messagingTemplate.convertAndSendToUser(sessionId, endpoint, initialMessage, headerAccessor.getMessageHeaders());
 
                 var userConnectMessage = colabEditService.getConnectedUserMessage(user);
+                colabEditService.handleNewUser(documentId, user);
 
                 broadcastMessageExceptSender(userConnectMessage, sessionId, endpoint);
             }

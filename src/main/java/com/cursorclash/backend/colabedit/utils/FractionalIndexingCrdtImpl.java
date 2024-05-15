@@ -62,6 +62,44 @@ public class FractionalIndexingCrdtImpl implements FractionalIndexingCrdt {
     }
 
     @Override
+    public void delete(double index, int userId) {
+        if (index <= 0.0 || index >= 1.0) {
+            System.out.println("Invalid index");
+            return;
+        }
+        // get to the block at the offset
+        CrdtBlock block = crdt.get(index);
+        if (block == null) {
+            System.out.println("Block not found at index " + index);
+            return;
+        }
+        crdt.remove(index);
+        System.out.println("User " + userId + " deleted block at index " + index);
+        System.out.println("CRDT state After Deletion: ");
+        System.out.println(this);
+    }
+
+    @Override
+    public void format(double index, int userId, boolean isBold, boolean isItalic, boolean isUnderline) {
+        if (index <= 0.0 || index >= 1.0) {
+            System.out.println("Invalid index");
+            return;
+        }
+        // get to the block at the offset
+        CrdtBlock block = crdt.get(index);
+        if (block == null) {
+            System.out.println("Block not found at index " + index);
+            return;
+        }
+        block.charInfo.isBold = isBold;
+        block.charInfo.isItalic = isItalic;
+        block.charInfo.isUnderline = isUnderline;
+        System.out.println("User " + userId + " formatted block at index " + index);
+        System.out.println("CRDT state After Formatting: ");
+        System.out.println(this);
+    }
+
+    @Override
     public String toString() {
         String str = "";
         for (CrdtBlock block : crdt.values()) {
