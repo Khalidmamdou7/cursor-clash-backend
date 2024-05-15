@@ -24,7 +24,6 @@ public class UserIMPL implements UserService {
     private UserRepo userRepo;
 
     @Autowired
-
     private PasswordEncoder passwordEncoder;
 
     
