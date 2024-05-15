@@ -1,4 +1,4 @@
-package com.cursorclash.backend.Authentication.repositories;
+package com.cursorclash.backend.Document.repositories;
 
 import com.cursorclash.backend.Document.entities.Document;
 import com.cursorclash.backend.Document.entities.DocumentPermission;

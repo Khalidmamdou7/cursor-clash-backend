@@ -1,6 +1,9 @@
 package com.cursorclash.backend.colabedit.services;
 
+import com.cursorclash.backend.Authentication.entities.User;
 import com.cursorclash.backend.colabedit.DTOs.InitialMessageOpDTO;
+import com.cursorclash.backend.colabedit.DTOs.UserConnectOpDTO;
+import com.cursorclash.backend.colabedit.DTOs.UserDisconnectOpDTO;
 import com.cursorclash.backend.colabedit.utils.FractionalIndexingCrdt;
 import com.cursorclash.backend.colabedit.utils.FractionalIndexingCrdtImpl;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -193,6 +196,20 @@ public class ColabEditServiceImpl implements ColabEditService {
         initialMessageOpDTO.setUsersCursorsPositions(usersCursorPositions.get(documentId));
 
         return initialMessageOpDTO;
+    }
+
+    @Override
+    public UserDisconnectOpDTO getDisconnectedUserMessage(User user) {
+        UserDisconnectOpDTO userDisconnectOpDTO = new UserDisconnectOpDTO();
+        userDisconnectOpDTO.setUserId(user.getUserid());
+        return userDisconnectOpDTO;
+    }
+
+    @Override
+    public UserConnectOpDTO getConnectedUserMessage(User user) {
+        UserConnectOpDTO userConnectOpDTO = new UserConnectOpDTO();
+        userConnectOpDTO.setUserId(user.getUserid());
+        return userConnectOpDTO;
     }
 
 }

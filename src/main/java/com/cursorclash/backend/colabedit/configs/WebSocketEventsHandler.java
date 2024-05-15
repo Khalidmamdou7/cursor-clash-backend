@@ -1,5 +1,6 @@
 package com.cursorclash.backend.colabedit.configs;
 
+import com.cursorclash.backend.Authentication.entities.User;
 import com.cursorclash.backend.colabedit.services.ColabEditService;
 import com.cursorclash.backend.colabedit.services.ColabEditServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,9 @@ public class WebSocketEventsHandler {
         if (sessionId != null && endpoint.matches("/topic/colabedit/\\d+")) {
             // This is a colabedit session
             String documentId = endpoint.split("/")[3];
+            User user = (User) accessor.getSessionAttributes().get("user");
+            // TODO: Check if user is allowed to access this document
+            
             sessionDestinations.put(sessionId, accessor.getDestination());
             var initialMessage = colabEditService.getInitialMessage(documentId);
             SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor.create(StompCommand.MESSAGE.getMessageType());
@@ -44,8 +48,9 @@ public class WebSocketEventsHandler {
             headerAccessor.setDestination(endpoint);
             messagingTemplate.convertAndSendToUser(sessionId, endpoint, initialMessage, headerAccessor.getMessageHeaders());
 
+            var userConnectMessage = colabEditService.getConnectedUserMessage(user);
 
-            broadcastMessageExceptSender("رحبوا بالحبيب صاحب السيشن دا اللي اسمه " + sessionId, sessionId, endpoint);
+            broadcastMessageExceptSender(userConnectMessage, sessionId, endpoint);
 
         }
 
@@ -55,13 +60,15 @@ public class WebSocketEventsHandler {
     public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
         String sessionId = accessor.getSessionId();
+        User user = (User) accessor.getSessionAttributes().get("user");
         String endpoint = sessionDestinations.get(sessionId);
 
-        // Broadcast image or any message indicating the user has disconnected
-        messagingTemplate.convertAndSend(endpoint, "مبحبوش الواد دا مع السلامة اللي اسمه " + sessionId);
+        var disconnectedUserMessage = colabEditService.getDisconnectedUserMessage(user);
+
+        messagingTemplate.convertAndSend(endpoint, disconnectedUserMessage);
     }
 
-    private void broadcastMessageExceptSender(String message, String senderSessionId, String endpoint) {
+    private void broadcastMessageExceptSender(Object message, String senderSessionId, String endpoint) {
         var endpointSessions = sessionDestinations.entrySet().stream().filter(entry -> entry.getValue().equals(endpoint));
         endpointSessions.forEach(entry -> {
             if (!entry.getKey().equals(senderSessionId)) {
