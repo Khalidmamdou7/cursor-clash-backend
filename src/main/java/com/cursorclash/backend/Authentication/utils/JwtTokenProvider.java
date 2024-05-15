@@ -8,10 +8,16 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.security.Key;
 
+@Service
 public class JwtTokenProvider {
 
     private final Key key;
@@ -19,6 +25,11 @@ public class JwtTokenProvider {
     @Autowired
     private UserRepo userRepo;
 
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
     public JwtTokenProvider() {
         this.key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
     }
@@ -35,14 +46,15 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public Claims extractClaims(String token) {
+    public Claims extractClaims(String bearerToken) {
+        String token = bearerToken.substring(7);
         Jws<Claims> jws = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
         return jws.getBody();
     }
 
-    public User getCurrentUser(String token) {
-        token = token.substring(7);
-        Claims claims = extractClaims(token);
+    public User getCurrentUser(String bearerToken) {
+
+        Claims claims = extractClaims(bearerToken);
         return userRepo.findByEmail(claims.getSubject());
     }
 

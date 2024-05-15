@@ -73,7 +73,7 @@ public class ColabEditController {
         System.out.println("Session ID: " + accessor.getSessionId());
         System.out.println("Destination: " + accessor.getDestination());
         System.out.println("User: " + accessor.getUser());
-        System.out.println("User details: " + accessor.getSessionAttributes().get("token"));
+        System.out.println("User details: " + accessor.getSessionAttributes().get("user"));
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             JsonNode jsonNode = objectMapper.readTree(message);

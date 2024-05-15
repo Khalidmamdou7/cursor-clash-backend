@@ -4,14 +4,13 @@ import com.cursorclash.backend.Authentication.DTOs.LoginDTO;
 import com.cursorclash.backend.Authentication.DTOs.UserDTO;
 import com.cursorclash.backend.Authentication.DTOs.UserResponseDTO;
 import com.cursorclash.backend.Authentication.entities.User;
-import com.cursorclash.backend.Authentication.repositories.DocumentRepo;
 import com.cursorclash.backend.Authentication.repositories.UserRepo;
 import com.cursorclash.backend.Authentication.services.UserService;
 import com.cursorclash.backend.Authentication.DTOs.LoginResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.cursorclash.backend.Authentication.utils.JwtTokenProvider;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.Optional;
 
 @Service
@@ -25,6 +24,9 @@ public class UserIMPL implements UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+
+
 
     
     @Override
@@ -56,7 +58,7 @@ public class UserIMPL implements UserService {
         if (optionalUser.isPresent()) {
             User newUser = optionalUser.get();
             String encodedPassword = newUser.getPassword();
-            Boolean isPwdRight = passwordEncoder.matches(loginDTO.getPassword(), encodedPassword);
+            Boolean isPwdRight = this.passwordEncoder.matches(loginDTO.getPassword(), encodedPassword);
             if (isPwdRight) {
                 String token = jwtTokenProvider.generateToken(loginDTO.getEmail());
                 return new LoginResponse("Login Success", true, token);

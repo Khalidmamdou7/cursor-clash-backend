@@ -34,7 +34,7 @@ public class User {
 
     public User(int userid, String username, String email, String password) {
         this.userid = userid;
-        Username = username;
+        this.Username = username;
         this.email = email;
         this.password = password;
     }

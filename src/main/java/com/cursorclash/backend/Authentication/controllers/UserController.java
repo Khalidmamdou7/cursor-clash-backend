@@ -22,7 +22,7 @@ public class UserController {
 
     @PostMapping(path = "/register")
     public ResponseEntity<UserResponseDTO> saveUser(@RequestBody UserDTO userDTO){
-        System.out.println("register req" + userDTO.toString());
+        System.out.println("register req");
         UserResponseDTO user = userService.addUser(userDTO);
         return ResponseEntity.status(HttpStatus.OK).body(user);
     }
