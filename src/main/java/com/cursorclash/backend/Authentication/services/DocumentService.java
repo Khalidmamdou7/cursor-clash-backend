@@ -71,6 +71,7 @@ public class DocumentService {
         }
     }
 
+
     public boolean hasPermission(Long documentId, int userId, PermissionType permissionType) {
         // Retrieve the document
         Optional<Document> optionalDocument = documentRepo.findById(documentId);

@@ -1,8 +1,9 @@
 package com.cursorclash.backend.colabedit.configs;
 
 import com.cursorclash.backend.Authentication.entities.User;
+import com.cursorclash.backend.Authentication.services.DocumentService;
+import com.cursorclash.backend.Document.DTOs.PermissionType;
 import com.cursorclash.backend.colabedit.services.ColabEditService;
-import com.cursorclash.backend.colabedit.services.ColabEditServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
@@ -10,11 +11,8 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Component;
-import org.springframework.web.socket.messaging.SessionConnectEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 import org.springframework.web.socket.messaging.SessionSubscribeEvent;
-import org.springframework.web.socket.messaging.SessionUnsubscribeEvent;
-
 import java.util.LinkedHashMap;
 
 @Component
@@ -25,6 +23,9 @@ public class WebSocketEventsHandler {
 
     @Autowired
     private ColabEditService colabEditService;
+
+    @Autowired
+    private DocumentService documentService;
 
     LinkedHashMap<String, String> sessionDestinations = new LinkedHashMap<>();
 
@@ -40,18 +41,21 @@ public class WebSocketEventsHandler {
             String documentId = endpoint.split("/")[3];
             User user = (User) accessor.getSessionAttributes().get("user");
             // TODO: Check if user is allowed to access this document
-            
-            sessionDestinations.put(sessionId, accessor.getDestination());
-            var initialMessage = colabEditService.getInitialMessage(documentId);
-            SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor.create(StompCommand.MESSAGE.getMessageType());
-            headerAccessor.setSessionId(sessionId);
-            headerAccessor.setDestination(endpoint);
-            messagingTemplate.convertAndSendToUser(sessionId, endpoint, initialMessage, headerAccessor.getMessageHeaders());
+            if (documentService.hasPermission(Long.valueOf(documentId), user.getUserid(), PermissionType.WRITE)) {
+                sessionDestinations.put(sessionId, accessor.getDestination());
+                var initialMessage = colabEditService.getInitialMessage(documentId);
+                SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor.create(StompCommand.MESSAGE.getMessageType());
+                headerAccessor.setSessionId(sessionId);
+                headerAccessor.setDestination(endpoint);
+                messagingTemplate.convertAndSendToUser(sessionId, endpoint, initialMessage, headerAccessor.getMessageHeaders());
 
-            var userConnectMessage = colabEditService.getConnectedUserMessage(user);
+                var userConnectMessage = colabEditService.getConnectedUserMessage(user);
 
-            broadcastMessageExceptSender(userConnectMessage, sessionId, endpoint);
-
+                broadcastMessageExceptSender(userConnectMessage, sessionId, endpoint);
+            }
+            else {
+                throw new RuntimeException("You dont have permission to Edit it");
+            }
         }
 
     }
