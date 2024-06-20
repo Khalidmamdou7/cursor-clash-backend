@@ -6,6 +6,7 @@ target/
 
 ### Secret Config Files ###
 /src/main/resources/application.properties
+ssl/
 
 ### STS ###
 .apt_generated
