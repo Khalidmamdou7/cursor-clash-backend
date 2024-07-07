@@ -43,5 +43,21 @@ services:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "springboot", "-p", "Khalid.mamdou7"]
       interval: 10s  # Check every 10 seconds
       retries: 5     # Retry 5 times before considering unhealthy
+
+
+  nginx:
+    image: nginx:latest
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./ssl:/etc/nginx/ssl
+    networks:
+      - springapimysql-net
+    depends_on:
+      - api_service
+
 networks:
   springapimysql-net:
