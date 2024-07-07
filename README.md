@@ -29,11 +29,11 @@ Note: If you are using IntelliJ IDEA, you can use the built-in Maven and Java to
     cd cursor-clash-backend
     ```
 1. Open the project in your favorite IDE (IntelliJ IDEA is recommended)
-1. Create a new file named `application.properties` in the `src/main/resources` directory copied from the `application.properties.example` file
+1. Create a new file named `application.properties` in the `src/main/resources` directory copied from the `application.template.properties` file
    
    Or you can run the following command to create the file
    ```bash
-    cp src/main/resources/application.properties.example src/main/resources/application.properties
+    cp src/main/resources/application.template.properties src/main/resources/application.properties
    ```
 1. Set the undefined properties in the `application.properties` file
 1. Run the project
@@ -62,13 +62,6 @@ Note: If you are using IntelliJ IDEA, you can use the built-in Maven and Java to
     cd <repo-name>
     ```
 
-1. Create a new file named `application.properties` in the `src/main/resources` directory copied from the `application.properties.example` file
-
-   Or you can run the following command to create the file
-   ```bash
-    cp src/main/resources/application.properties.example src/main/resources/application.properties
-   ```
-1. Set the undefined properties in the `application.properties` file
 1. Generate a self-signed certificate for the server to use https and place it in the `ssl` directory
     ```bash
     mkdir -p ssl && openssl req -newkey rsa:2048 -nodes -keyout ssl/mykey.key -x509 -days 365 -out ssl/mycert.crt

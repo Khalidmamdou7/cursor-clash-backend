@@ -40,12 +40,10 @@ public class DocumentController {
 
     @GetMapping("/{documentId}")
     public ResponseEntity<?> openDocument(@PathVariable Long documentId, @RequestHeader("Authorization") String token) {
-        try {
-            DocumentDTO document = documentService.openDocument(documentId, token);
-            return ResponseEntity.status(HttpStatus.OK).body(document);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to open document: " + e.getMessage());
-        }
+
+        DocumentDTO document = documentService.openDocument(documentId, token);
+        return ResponseEntity.status(HttpStatus.OK).body(document);
+
     }
 
     @PutMapping("/{documentId}")

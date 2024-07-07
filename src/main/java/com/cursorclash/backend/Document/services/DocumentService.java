@@ -7,6 +7,9 @@ import com.cursorclash.backend.Authentication.entities.User;
 import com.cursorclash.backend.Authentication.utils.JwtTokenProvider;
 import com.cursorclash.backend.Document.repositories.DocumentPermissionRepo;
 import com.cursorclash.backend.Document.repositories.DocumentRepo;
+import com.cursorclash.backend.exceptions.CustomExceptions.BadRequestException;
+import com.cursorclash.backend.exceptions.CustomExceptions.DocumentNotFoundException;
+import com.cursorclash.backend.exceptions.CustomExceptions.NotAuthorizedException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,42 +36,40 @@ public class DocumentService {
     public void shareDocument(Long documentId, String recipientEmail, PermissionType permissionType, String token) {
         User currentUser = jwtTokenProvider.getCurrentUser(token);
 
-        try {
-            // Find the document by ID
-            Optional<Document> optionalDocument = documentRepo.findById(documentId);
-            if (!optionalDocument.isPresent()) {
-                throw new RuntimeException("Document with ID " + documentId + " not found.");
-            }
 
-            Document document = optionalDocument.get();
-
-            // Check if the current user is the owner of the document
-            if (!document.getOwner().equals(currentUser)) {
-                throw new RuntimeException("You don't have permission to share this document.");
-            }
-
-            // Find the user by email
-            User recipientUser = userRepo.findByEmail(recipientEmail);
-            if (recipientUser == null) {
-                throw new RuntimeException("Recipient with email " + recipientEmail + " not found.");
-            }
-
-            // Check if the same permission already exists
-            List<DocumentPermission> existingPermissions = documentPermissionRepo.findByDocumentAndGranteeAndPermissionType(document, recipientUser, permissionType);
-            if (!existingPermissions.isEmpty()) {
-                throw new RuntimeException("This document is already shared with the recipient with the same permission.");
-            }
-
-            DocumentPermission documentPermission = new DocumentPermission();
-            documentPermission.setDocument(document);
-            documentPermission.setGrantee(recipientUser);
-            documentPermission.setPermissionType(permissionType);
-
-            documentPermissionRepo.save(documentPermission);
-
-        } catch (Exception e) {
-            throw new RuntimeException("Error sharing document: " + e.getMessage(), e);
+        // Find the document by ID
+        Optional<Document> optionalDocument = documentRepo.findById(documentId);
+        if (!optionalDocument.isPresent()) {
+            throw new DocumentNotFoundException("Document with ID " + documentId + " not found.");
         }
+
+        Document document = optionalDocument.get();
+
+        // Check if the current user is the owner of the document
+        if (!document.getOwner().equals(currentUser)) {
+            throw new NotAuthorizedException("You are not the owner of the document.");
+        }
+
+        // Find the user by email
+        User recipientUser = userRepo.findByEmail(recipientEmail);
+        if (recipientUser == null) {
+            throw new BadRequestException("User with email " + recipientEmail + " not found.");
+        }
+
+        // Check if the same permission already exists
+        List<DocumentPermission> existingPermissions = documentPermissionRepo.findByDocumentAndGranteeAndPermissionType(document, recipientUser, permissionType);
+        if (!existingPermissions.isEmpty()) {
+            throw new BadRequestException("The document is already shared with the user with the same permission.");
+        }
+
+        DocumentPermission documentPermission = new DocumentPermission();
+        documentPermission.setDocument(document);
+        documentPermission.setGrantee(recipientUser);
+        documentPermission.setPermissionType(permissionType);
+
+        documentPermissionRepo.save(documentPermission);
+
+
     }
 
 
@@ -87,12 +88,11 @@ public class DocumentService {
                 List<DocumentPermission> permissions = documentPermissionRepo.findByDocumentAndGranteeAndPermissionType(document, user, permissionType);
                 return !permissions.isEmpty();
             } else {
-                // Handle case where user is not found
-                throw new RuntimeException("User with ID " + userId + " not found.");
+                throw new BadRequestException("User with ID " + userId + " not found.");
             }
         } else {
-            // Handle case where document is not found
-            throw new RuntimeException("Document with ID " + documentId + " not found.");
+
+            throw new DocumentNotFoundException("Document with ID " + documentId + " not found.");
         }
     }
 
@@ -139,12 +139,15 @@ public class DocumentService {
                 if (document.getOwner().equals(currentUser) || document.getEditor().equals(currentUser)) {
                     document.setName(newName);
                     return documentRepo.save(document);
+                } else {
+                    throw new NotAuthorizedException("You are not the owner of the document.");
                 }
+            } else {
+                throw new DocumentNotFoundException("Document with ID " + documentId + " not found.");
             }
         } else {
-            throw new RuntimeException("You dont have permission to rename it");
+            throw new NotAuthorizedException("You don't have permission to rename this document.");
         }
-        return null;
     }
 
 
@@ -164,13 +167,13 @@ public class DocumentService {
                     documentPermissionRepo.deleteByDocument(document);
                     documentRepo.delete(document);
                 } else {
-                    throw new RuntimeException("You are not the owner of the document.");
+                    throw new NotAuthorizedException("You are not the owner of the document.");
                 }
             } else {
-                throw new RuntimeException("Document not found.");
+                throw new DocumentNotFoundException("Document with ID " + documentId + " not found.");
             }
         } else {
-            throw new RuntimeException("You don't have permission to delete the document.");
+            throw new NotAuthorizedException("You don't have permission to delete this document.");
         }
     }
 
@@ -187,9 +190,11 @@ public class DocumentService {
                         document.getOwner().getUserid(),
                         document.getContent());
                 return documentDTO;
+            } else {
+                throw new DocumentNotFoundException("Document with ID " + documentId + " not found.");
             }
         }
-        throw new RuntimeException("You dont have permission to open it");
+        throw new NotAuthorizedException("You don't have permission to open this document.");
     }
 
     public List<DocumentDTO> getOwnedDocuments(String token) {
@@ -246,9 +251,11 @@ public class DocumentService {
                         document.getOwner().getUserid(),
                         document.getContent()
                 );
+            } else {
+                throw new DocumentNotFoundException("Document with ID " + documentId + " not found.");
             }
         }
-        return null;
+        throw new NotAuthorizedException("You don't have permission to update this document.");
     }
 
 }

@@ -4,6 +4,7 @@ import com.cursorclash.backend.Authentication.DTOs.*;
 import com.cursorclash.backend.Authentication.entities.User;
 import com.cursorclash.backend.Authentication.repositories.UserRepo;
 import com.cursorclash.backend.Authentication.services.UserService;
+import com.cursorclash.backend.exceptions.CustomExceptions.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.cursorclash.backend.Authentication.utils.JwtTokenProvider;
@@ -30,7 +31,7 @@ public class UserIMPL implements UserService {
     public UserResponseDTO addUser(RegReqDTO userRegDTO) {
         User existingUser = userRepo.findByEmail(userRegDTO.getEmail());
         if (existingUser != null) {
-            throw new RuntimeException("User with email " + userRegDTO.getEmail() + " already exists.");
+            throw new BadRequestException("User with email " + userRegDTO.getEmail() + " already exists.");
         }
 
         User user = new User(

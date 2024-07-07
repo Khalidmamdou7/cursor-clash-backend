@@ -4,6 +4,7 @@ import com.cursorclash.backend.Authentication.entities.User;
 import com.cursorclash.backend.Document.services.DocumentService;
 import com.cursorclash.backend.Document.DTOs.PermissionType;
 import com.cursorclash.backend.colabedit.services.ColabEditService;
+import com.cursorclash.backend.exceptions.CustomExceptions.NotAuthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
@@ -55,7 +56,7 @@ public class WebSocketEventsHandler {
                 broadcastMessageExceptSender(userConnectMessage, sessionId, endpoint);
             }
             else {
-                throw new RuntimeException("You dont have permission to Edit it");
+                throw new NotAuthorizedException("User is not authorized to access this document");
             }
         }
 
