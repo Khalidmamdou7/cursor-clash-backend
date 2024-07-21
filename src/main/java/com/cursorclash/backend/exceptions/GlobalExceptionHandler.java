@@ -34,11 +34,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(errorDetails, HttpStatus.UNAUTHORIZED);
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<?> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        ErrorDetails errorDetails = new ErrorDetails(HttpStatus.BAD_REQUEST.value(), "Validation error", ex.getBindingResult().toString());
-        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
-    }
+//    @ExceptionHandler(MethodArgumentNotValidException.class)
+//    public ResponseEntity<?> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+//        ErrorDetails errorDetails = new ErrorDetails(HttpStatus.BAD_REQUEST.value(), "Validation error", ex.getBindingResult().toString());
+//        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+//    }
 
     @ExceptionHandler(EntityNotFoundException.class)
     private ResponseEntity<ErrorDetails> handleEntityNotFound(EntityNotFoundException ex){
